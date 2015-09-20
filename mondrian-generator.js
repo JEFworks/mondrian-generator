@@ -1,13 +1,13 @@
+var canvas = document.getElementById('compositionCanvas');
+var context = canvas.getContext('2d');
+
 function clearCanvas() {
-  var canvas = document.getElementById('compositionCanvas');
-  var context = canvas.getContext('2d');
   context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
+/* Code courtesy of http://stackoverflow.com/questions/12796513/html5-canvas-to-png-file*/  
 function saveCanvas() {
-  var canvas = document.getElementById('compositionCanvas');
   var image = canvas.toDataURL("image/png");
-  /* Code courtesy of http://stackoverflow.com/questions/12796513/html5-canvas-to-png-file*/  
   /* Change MIME type to trick the browser to downlaod the file instead of displaying it */
   image = image.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
   /* In addition to <a>'s "download" attribute, you can define HTTP-style headers */
@@ -17,7 +17,7 @@ function saveCanvas() {
 /* REGISTER DOWNLOAD HANDLER */
 /* Only convert the canvas to Data URL when the user clicks. 
    This saves RAM and CPU ressources in case this feature is not required. */
-document.getElementById("save").addEventListener('click', saveCanvas, false);
+document.getElementById('save').addEventListener('click', saveCanvas, false);
 
 function composition() {
   
