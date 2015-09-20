@@ -4,6 +4,17 @@ function clearCanvas() {
   context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
+function saveCanvas() {
+  var canvas = document.getElementById('compositionCanvas');
+  var image = canvas.toDataURL("image/png");
+  /* Code courtesy of http://stackoverflow.com/questions/12796513/html5-canvas-to-png-file*/  
+  /* Change MIME type to trick the browser to downlaod the file instead of displaying it */
+  image = image.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
+  /* In addition to <a>'s "download" attribute, you can define HTTP-style headers */
+  image = image.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=mondrian.png');
+  this.href = image;
+}
+
 function composition() {
   
   colors = ['#c70000', '#f4b600', '#2d2bb4', 'black'];
