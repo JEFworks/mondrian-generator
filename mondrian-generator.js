@@ -14,6 +14,10 @@ function saveCanvas() {
   image = image.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=mondrian.png');
   this.href = image;
 }
+/* REGISTER DOWNLOAD HANDLER */
+/* Only convert the canvas to Data URL when the user clicks. 
+   This saves RAM and CPU ressources in case this feature is not required. */
+document.getElementById("save").addEventListener('click', saveCanvas, false);
 
 function composition() {
   
