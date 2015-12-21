@@ -29,6 +29,7 @@ I welcome any bug reports, enhancement requests, and other contributions. To sub
 I have dedicated the work to the [public domain](LICENSE).
 
 ## Other Mondrian generators online:
+- http://jordanjwatkins.com/mondrian/ [source code](https://github.com/jordanjwatkins/mondrian-generator)
 - http://www.tristesse.com/~howie/Flash/MondRect.html
 - http://www.stephen.com/mondrimat/
 - http://vart.institute/mondrian/
