@@ -25,9 +25,6 @@ Sample random compositions generated using the online Mondrian Generator:
 ## Contributing
 I welcome any bug reports, enhancement requests, and other contributions. To submit a bug report or enhancement request, please use the GitHub issues tracker. For more substantial contributions, please fork this repo, push your changes to your fork, and submit a pull request with a good commit message. 
 
-## License
-I have dedicated the work to the [public domain](LICENSE).
-
 ## Other Mondrian generators online:
 - http://jordanjwatkins.com/mondrian/ [source code](https://github.com/jordanjwatkins/mondrian-generator)
 - http://www.tristesse.com/~howie/Flash/MondRect.html
