@@ -80,17 +80,22 @@ function getContext() {
   return { context, canvas }
 }
 
-function getLineWidth(i, linePositions) {
+function getLineWidths(linePositions) {
   // const LINE_WIDTHS = [2, 4, 6, 8, 10]
   const LINE_WIDTHS = [4]
-  const DEFAULT_WIDTH = 4
-  const LINE_WIDTH = i === 0 || i === linePositions.length - 1 ? DEFAULT_WIDTH : LINE_WIDTHS[getRandomInt(0, LINE_WIDTHS.length)]
-  return LINE_WIDTH
+
+  const BORDER_WIDTH = 4
+
+  const lineWidths = linePositions.map((_, idx) => {
+    const lineWidth = idx === 0 || idx === linePositions.length - 1 ? BORDER_WIDTH : LINE_WIDTHS[getRandomInt(0, LINE_WIDTHS.length)]
+    return lineWidth
+  })
+
+  return lineWidths
 }
 
-function addLinesToContext(context, linePositions, xOrY) {
+function addLinesToContext(context, linePositions, xOrY, lineWidths) {
   linePositions.forEach((linePosition, idx) => {
-    const LINE_WIDTH = getLineWidth(idx, linePositions)
     const moveToArgs = xOrY === 'x' ? [linePosition, 0] : [0, linePosition]
     const lineToArgs = xOrY === 'x' ? [linePosition, CANVAS_HEIGHT] : [CANVAS_WIDTH, linePosition]
 
@@ -98,7 +103,7 @@ function addLinesToContext(context, linePositions, xOrY) {
     context.moveTo(...moveToArgs);
     context.lineTo(...lineToArgs);
     context.stroke();
-    context.lineWidth = LINE_WIDTH;
+    context.lineWidth = lineWidths[idx];
     context.strokeStyle = 'black';
     context.stroke();
   })
@@ -106,14 +111,24 @@ function addLinesToContext(context, linePositions, xOrY) {
   return context
 }
 
-function fillContextSquares(context, x, y) {
+function getRectDims(xLineStarts, yLineStarts) {
+  const xPtr = getRandomInt(0, xLineStarts.length)
+  const yPtr = getRandomInt(0, yLineStarts.length)
+  const X_START = xLineStarts[xPtr]
+  const Y_START = yLineStarts[yPtr]
+  const RECT_WIDTH = xLineStarts[xPtr + 1] - X_START
+  const RECT_HEIGHT = yLineStarts[yPtr + 1] - Y_START
+
+  return { X_START, Y_START, RECT_WIDTH, RECT_HEIGHT }
+}
+
+function fillContextSquares(context, xLineStarts, yLineStarts) {
   const numColors = getRandomInt(3, 10);
 
   for (let c = 0; c < numColors; c++) {
-    const xPtr = getRandomInt(0, x.length)
-    const yPtr = getRandomInt(0, y.length)
+    const { X_START, Y_START, WIDTH, RECT_HEIGHT, RECT_WIDTH } = getRectDims(xLineStarts, yLineStarts)
     context.beginPath();
-    context.rect(x[xPtr], y[yPtr], x[xPtr + 1] - x[xPtr], y[yPtr + 1] - y[yPtr]);
+    context.rect(X_START, Y_START, RECT_WIDTH, RECT_HEIGHT);
     const randColor = colors[getRandomInt(0, colors.length)];
     context.fillStyle = colorToHexMap[randColor];
     context.fill();
@@ -127,8 +142,11 @@ function makeMondrianImg(shouldSave) {
   const { xLineStarts, yLineStarts } = getLineStarts()
 
   let { context, canvas } = getContext()
-  context = addLinesToContext(context, xLineStarts, 'x')
-  context = addLinesToContext(context, yLineStarts, 'y')
+  const xLineWidths = getLineWidths(xLineStarts)
+  const yLineWidths = getLineWidths(yLineStarts)
+
+  context = addLinesToContext(context, xLineStarts, 'x', xLineWidths)
+  context = addLinesToContext(context, yLineStarts, 'y', yLineWidths)
   context = fillContextSquares(context, xLineStarts, yLineStarts)
 
   if (shouldSave) {
@@ -140,4 +158,4 @@ function makeMondrianImg(shouldSave) {
 
 // TO DO:
 // 1. Generate line widths dynamically.
-// 2. Modularize <style/> tag into .css file.
+// 2. Add options that create an img resembling Earle Brown's "December 1952" score.
