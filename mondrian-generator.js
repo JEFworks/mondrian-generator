@@ -131,6 +131,7 @@ function makeMondrianImg(shouldSave) {
 
 makeMondrianImg(true)
 
+
 // TO DO:
 // 1. Generate line widths dynamically.
 // 2. Dynamically set the canvas size so it's larger.
