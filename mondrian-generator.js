@@ -81,9 +81,8 @@ function getContext() {
 }
 
 function getLineWidths(linePositions) {
-  // const LINE_WIDTHS = [2, 4, 6, 8, 10]
-  const LINE_WIDTHS = [4]
-
+  const LINE_WIDTHS = [2, 4, 6, 8, 10]
+  // const LINE_WIDTHS = [4]
   const BORDER_WIDTH = 4
 
   const lineWidths = linePositions.map((_, idx) => {
@@ -126,7 +125,7 @@ function fillContextSquares(context, xLineStarts, yLineStarts) {
   const numColors = getRandomInt(3, 10);
 
   for (let c = 0; c < numColors; c++) {
-    const { X_START, Y_START, WIDTH, RECT_HEIGHT, RECT_WIDTH } = getRectDims(xLineStarts, yLineStarts)
+    const { X_START, Y_START, RECT_HEIGHT, RECT_WIDTH } = getRectDims(xLineStarts, yLineStarts)
     context.beginPath();
     context.rect(X_START, Y_START, RECT_WIDTH, RECT_HEIGHT);
     const randColor = colors[getRandomInt(0, colors.length)];
