@@ -1,3 +1,8 @@
+function clearCanvas() {
+  let { context, canvas } = getContext()
+  context.clearRect(0, 0, canvas.width, canvas.height);
+}
+
 function autoSaveImg(image) {
   const link = document.createElement('a');
   link.href = image;
@@ -13,6 +18,7 @@ function saveCanvas() {
   image = image.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
   image = image.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=mondrian.png');
   this.href = image;
+
   autoSaveImg(image)
 }
 
@@ -123,8 +129,18 @@ function makeMondrianImg(shouldSave) {
   }
 }
 
+<<<<<<< HEAD
 makeMondrianImg()
 
 // TO DO:
 // 1. Generate line widths dynamically.
 // 2. Prevent illegal Mondrian squares- ones that only go across half of canvas.
+=======
+//makeMondrianImg(true)
+
+
+// TO DO:
+// 1. Generate line widths dynamically.
+// 2. Dynamically set the canvas size so it's larger.
+// 3.
+>>>>>>> c5ee8614efafd58de216767e7f68948374a40ab4
