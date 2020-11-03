@@ -6,7 +6,7 @@ function clearCanvas() {
 function autoSaveImg(image) {
   const link = document.createElement('a');
   link.href = image;
-  link.download = 'new-mondrian.jpg';
+  link.download = 'new-artwork.jpg';
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -77,6 +77,8 @@ function getContext() {
   canvas.width = CANVAS_WIDTH
   canvas.height = CANVAS_HEIGHT
   const context = canvas.getContext('2d');
+  context.fillStyle = "white";
+  context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   return { context, canvas }
 }
 
