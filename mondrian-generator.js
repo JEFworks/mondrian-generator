@@ -36,8 +36,8 @@ function getRandomInt(min, max) {
 }
 
 function orientXYtoTopLeft(xInnerLines, yInnerLines) {
-  const xLineStarts = xInnerLines.sort();
-  const yLineStarts = yInnerLines.sort().reverse();
+  const xLineStarts = xInnerLines.sort((a, b) => a - b);
+  const yLineStarts = yInnerLines.sort((a, b) => a - b).reverse();
 
   return { xLineStarts, yLineStarts }
 }
@@ -81,12 +81,12 @@ function getContext() {
 }
 
 function getLineWidths(linePositions) {
-  const LINE_WIDTHS = [2, 4, 6, 8, 10]
-  // const LINE_WIDTHS = [4]
+  // const LINE_WIDTHS = [2, 4, 6, 8, 10]
+  const LINE_WIDTHS = [4]
   const BORDER_WIDTH = 4
 
   const lineWidths = linePositions.map((_, idx) => {
-    const lineWidth = idx === 0 || idx === linePositions.length - 1 ? BORDER_WIDTH : LINE_WIDTHS[getRandomInt(0, LINE_WIDTHS.length)]
+    const lineWidth = idx === 0 || idx === linePositions.length - 1 ? BORDER_WIDTH : LINE_WIDTHS[getRandomInt(0, LINE_WIDTHS.length - 1)]
     return lineWidth
   })
 
@@ -110,25 +110,29 @@ function addLinesToContext(context, linePositions, xOrY, lineWidths) {
   return context
 }
 
-function getRectDims(xLineStarts, yLineStarts) {
-  const xPtr = getRandomInt(0, xLineStarts.length)
-  const yPtr = getRandomInt(0, yLineStarts.length)
+function getRectDims(xLineStarts, yLineStarts, xLineWidths, yLineWidths) {
+  const xPtr = getRandomInt(0, xLineStarts.length - 1)
+  const yPtr = getRandomInt(0, yLineStarts.length - 1)
+
   const X_START = xLineStarts[xPtr]
   const Y_START = yLineStarts[yPtr]
   const RECT_WIDTH = xLineStarts[xPtr + 1] - X_START
   const RECT_HEIGHT = yLineStarts[yPtr + 1] - Y_START
 
+  console.log('RECT_WIDTH:', RECT_WIDTH)
+  console.log('RECT_HEIGHT:', RECT_HEIGHT)
+
   return { X_START, Y_START, RECT_WIDTH, RECT_HEIGHT }
 }
 
-function fillContextSquares(context, xLineStarts, yLineStarts) {
+function fillContextSquares(context, xLineStarts, yLineStarts, xLineWidths, yLineWidths) {
   const numColors = getRandomInt(3, 10);
 
   for (let c = 0; c < numColors; c++) {
-    const { X_START, Y_START, RECT_HEIGHT, RECT_WIDTH } = getRectDims(xLineStarts, yLineStarts)
+    const { X_START, Y_START, RECT_HEIGHT, RECT_WIDTH } = getRectDims(xLineStarts, yLineStarts, xLineWidths, yLineWidths)
     context.beginPath();
     context.rect(X_START, Y_START, RECT_WIDTH, RECT_HEIGHT);
-    const randColor = colors[getRandomInt(0, colors.length)];
+    const randColor = colors[getRandomInt(0, colors.length - 1)];
     context.fillStyle = colorToHexMap[randColor];
     context.fill();
     context.stroke();
@@ -146,7 +150,7 @@ function makeMondrianImg(shouldSave) {
 
   context = addLinesToContext(context, xLineStarts, 'x', xLineWidths)
   context = addLinesToContext(context, yLineStarts, 'y', yLineWidths)
-  context = fillContextSquares(context, xLineStarts, yLineStarts)
+  context = fillContextSquares(context, xLineStarts, yLineStarts, xLineWidths, yLineWidths)
 
   if (shouldSave) {
     saveCanvas(canvas)
