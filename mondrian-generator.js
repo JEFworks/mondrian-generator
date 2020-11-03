@@ -1,4 +1,5 @@
 function clearCanvas() {
+  let { context, canvas } = getContext()
   context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -20,6 +21,7 @@ function saveCanvas() {
   /* In addition to <a>'s "download" attribute, you can define HTTP-style headers */
   image = image.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=mondrian.png');
   this.href = image;
+
   autoSaveImg(image)
 }
 /* REGISTER DOWNLOAD HANDLER */
@@ -124,7 +126,7 @@ function makeMondrianImg(shouldSave) {
   }
 }
 
-makeMondrianImg(true)
+//makeMondrianImg(true)
 
 
 // TO DO:
