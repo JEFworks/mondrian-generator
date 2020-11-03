@@ -81,8 +81,7 @@ function getContext() {
 }
 
 function getLineWidths(linePositions) {
-  // const LINE_WIDTHS = [2, 4, 6, 8, 10]
-  const LINE_WIDTHS = [4]
+  const LINE_WIDTHS = [2, 7, 12, 17]
   const BORDER_WIDTH = 4
 
   const lineWidths = linePositions.map((_, idx) => {
@@ -119,9 +118,6 @@ function getRectDims(xLineStarts, yLineStarts, xLineWidths, yLineWidths) {
   const RECT_WIDTH = xLineStarts[xPtr + 1] - X_START
   const RECT_HEIGHT = yLineStarts[yPtr + 1] - Y_START
 
-  console.log('RECT_WIDTH:', RECT_WIDTH)
-  console.log('RECT_HEIGHT:', RECT_HEIGHT)
-
   return { X_START, Y_START, RECT_WIDTH, RECT_HEIGHT }
 }
 
@@ -148,9 +144,9 @@ function makeMondrianImg(shouldSave) {
   const xLineWidths = getLineWidths(xLineStarts)
   const yLineWidths = getLineWidths(yLineStarts)
 
+  context = fillContextSquares(context, xLineStarts, yLineStarts, xLineWidths, yLineWidths)
   context = addLinesToContext(context, xLineStarts, 'x', xLineWidths)
   context = addLinesToContext(context, yLineStarts, 'y', yLineWidths)
-  context = fillContextSquares(context, xLineStarts, yLineStarts, xLineWidths, yLineWidths)
 
   if (shouldSave) {
     saveCanvas(canvas)
@@ -160,5 +156,4 @@ function makeMondrianImg(shouldSave) {
 // makeMondrianImg(true)
 
 // TO DO:
-// 1. Generate line widths dynamically.
-// 2. Add options that create an img resembling Earle Brown's "December 1952" score.
+// 1. Add options that create an img resembling Earle Brown's "December 1952" score.
