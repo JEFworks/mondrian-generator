@@ -2,63 +2,26 @@
 <html>
 
   <head>
-    <style>
-      html {
-      font-family: sans-serif;
-      -webkit-text-size-adjust: 100%;
-      -ms-text-size-adjust: 100%;
-      }
-
-      body {
-      margin: 0;
-      }
-
-      .btn {
-      display: inline-block;
-      padding: 6px 12px;
-      margin-bottom: 0;
-      font-size: 14px;
-      font-weight: normal;
-      line-height: 1.42857143;
-      text-align: center;
-      white-space: nowrap;
-      vertical-align: middle;
-      -ms-touch-action: manipulation;
-      touch-action: manipulation;
-      cursor: pointer;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-      background-image: none;
-      border: 1px solid transparent;
-      color: white;
-      text-decoration: none;
-      background-color: #aa0000;
-      margin: 18px 9px;
-      -o-border-radius: 7px;
-      -webkit-border-radius: 7px;
-      -moz-border-radius: 7px;
-      border-radius: 7px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
-      -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
-      -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
-      -o-box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
-      }
-    </style>
+    <link 
+      rel = "stylesheet"
+      type = "text/css"
+      href = "./stylesheet.css" 
+    />
   </head>
   
-  <body onload="makeMondrianImg();">
+  <body onload="makeArtistImg('Brown');">
 
     <!-- fork me on github banner -->
-    <a href="https://github.com/JEFworks/mondrian-generator"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+    <a href="https://github.com/JEFworks/mondrian-generator">
+      <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png">
+    </a>
     
     <center>
       <h1>Random Composition in Red, Blue, and Yellow</h1>      
-      <canvas id="compositionCanvas" width="400" height="400"></canvas>
+      <canvas id="compositionCanvas" ></canvas>
       <script type="text/javascript" src="./mondrian-generator.js"></script>
       <br>
-      <button class="btn" onclick="clearCanvas(); makeMondrianImg();" href="javascript:void(0);">Generate New</button>
+      <button class="btn" onclick="clearCanvas(); makeArtistImg('Brown');" href="javascript:void(0);">Generate New</button>
       <a class='btn' id='save' onclick='saveCanvas()'  href="javascript:void(0);">Save Image</a>
     </center>
   </body>
