@@ -129,18 +129,9 @@ function makeMondrianImg(shouldSave) {
   }
 }
 
-<<<<<<< HEAD
-makeMondrianImg()
-
-// TO DO:
-// 1. Generate line widths dynamically.
-// 2. Prevent illegal Mondrian squares- ones that only go across half of canvas.
-=======
-//makeMondrianImg(true)
-
+makeMondrianImg(true)
 
 // TO DO:
 // 1. Generate line widths dynamically.
 // 2. Dynamically set the canvas size so it's larger.
 // 3.
->>>>>>> c5ee8614efafd58de216767e7f68948374a40ab4
