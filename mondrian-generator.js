@@ -43,14 +43,17 @@ function orientXYtoTopLeft(xInnerLines, yInnerLines) {
 }
 
 function addBorders(innerLines) {
-  const linesWithBorders = [2, ...innerLines, 398]
+  const BORDER_WIDTH = 2
+  const linesWithBorders = [BORDER_WIDTH, ...innerLines, CANVAS_WIDTH - BORDER_WIDTH]
   return linesWithBorders
 }
 
 function getInnerLines(numLines) {
   const innerLines = [];
+  const PADDING_MARGIN = 10
+
   for (let i = 0; i < numLines; i++) {
-    innerLines.push(getRandomInt(10, 380))
+    innerLines.push(getRandomInt(PADDING_MARGIN, CANVAS_WIDTH - PADDING_MARGIN))
   };
   const linesWithBorders = addBorders(innerLines)
   return linesWithBorders
@@ -66,10 +69,13 @@ function getLineStarts() {
   return { xLineStarts, yLineStarts }
 }
 
+const CANVAS_WIDTH = 400
+const CANVAS_HEIGHT = 400
+
 function getContext() {
   const canvas = document.getElementById('compositionCanvas');
-  canvas.width = 400
-  canvas.height = 400
+  canvas.width = CANVAS_WIDTH
+  canvas.height = CANVAS_HEIGHT
   const context = canvas.getContext('2d');
   return { context, canvas }
 }
@@ -86,7 +92,7 @@ function addLinesToContext(context, linePositions, xOrY) {
   linePositions.forEach((linePosition, idx) => {
     const LINE_WIDTH = getLineWidth(idx, linePositions)
     const moveToArgs = xOrY === 'x' ? [linePosition, 0] : [0, linePosition]
-    const lineToArgs = xOrY === 'x' ? [linePosition, 400] : [400, linePosition]
+    const lineToArgs = xOrY === 'x' ? [linePosition, CANVAS_HEIGHT] : [CANVAS_WIDTH, linePosition]
 
     context.beginPath();
     context.moveTo(...moveToArgs);
@@ -102,6 +108,7 @@ function addLinesToContext(context, linePositions, xOrY) {
 
 function fillContextSquares(context, x, y) {
   const numColors = getRandomInt(3, 10);
+
   for (let c = 0; c < numColors; c++) {
     const xPtr = getRandomInt(0, x.length)
     const yPtr = getRandomInt(0, y.length)
@@ -129,10 +136,8 @@ function makeMondrianImg(shouldSave) {
   }
 }
 
-//makeMondrianImg(true)
-
+// makeMondrianImg(true)
 
 // TO DO:
 // 1. Generate line widths dynamically.
-// 2. Dynamically set the canvas size so it's larger.
-// 3.
+// 2. Modularize <style/> tag into .css file.
