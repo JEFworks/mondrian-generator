@@ -1,7 +1,3 @@
-function clearCanvas() {
-  context.clearRect(0, 0, canvas.width, canvas.height);
-}
-
 function autoSaveImg(image) {
   const link = document.createElement('a');
   link.href = image;
@@ -11,21 +7,14 @@ function autoSaveImg(image) {
   document.body.removeChild(link);
 }
 
-/* Code courtesy of http://stackoverflow.com/questions/12796513/html5-canvas-to-png-file*/
 function saveCanvas() {
   const canvas = document.getElementById('compositionCanvas');
-  var image = canvas.toDataURL("image/png");
-  /* Change MIME type to trick the browser to downlaod the file instead of displaying it */
+  let image = canvas.toDataURL("image/png");
   image = image.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
-  /* In addition to <a>'s "download" attribute, you can define HTTP-style headers */
   image = image.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=mondrian.png');
   this.href = image;
   autoSaveImg(image)
 }
-/* REGISTER DOWNLOAD HANDLER */
-/* Only convert the canvas to Data URL when the user clicks. 
-   This saves RAM and CPU ressources in case this feature is not required. */
-// document.getElementById('save').addEventListener('click', saveCanvas, false);
 
 const colorToHexMap = {
   red: '#fe0000',
@@ -40,35 +29,44 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function getLinePositions() {
+function orientXYtoTopLeft(xInnerLines, yInnerLines) {
+  const xLineStarts = xInnerLines.sort();
+  const yLineStarts = yInnerLines.sort().reverse();
+
+  return { xLineStarts, yLineStarts }
+}
+
+function addBorders(innerLines) {
+  const linesWithBorders = [2, ...innerLines, 398]
+  return linesWithBorders
+}
+
+function getInnerLines(numLines) {
+  const innerLines = [];
+  for (let i = 0; i < numLines; i++) {
+    innerLines.push(getRandomInt(10, 380))
+  };
+  const linesWithBorders = addBorders(innerLines)
+  return linesWithBorders
+}
+
+function getLineStarts() {
   const numXLines = getRandomInt(2, 4);
   const numYLines = getRandomInt(2, 4)
-  x = [];
-  for (i = 0; i < numXLines; i++) {
-    x.push(getRandomInt(10, 380))
-  };
-  y = [];
-  for (i = 0, t = numYLines; i < t; i++) {
-    y.push(getRandomInt(10, 380))
-  };
-  x = x.sort();
-  y = y.sort().reverse(); // easier to think of 0,0 as top left
+  const xInnerLines = getInnerLines(numXLines)
+  const yInnerLines = getInnerLines(numYLines)
+  const { xLineStarts, yLineStarts } = orientXYtoTopLeft(xInnerLines, yInnerLines)
 
-  // add border
-  x.unshift(2);
-  x.push(398);
-  y.unshift(2);
-  y.push(398);
-
-  return { x, y }
+  return { xLineStarts, yLineStarts }
 }
 
 function getContext() {
   const canvas = document.getElementById('compositionCanvas');
+  canvas.width = 400
+  canvas.height = 400
   const context = canvas.getContext('2d');
   return { context, canvas }
 }
-
 
 function getLineWidth(i, linePositions) {
   // const LINE_WIDTHS = [2, 4, 6, 8, 10]
@@ -79,10 +77,11 @@ function getLineWidth(i, linePositions) {
 }
 
 function addLinesToContext(context, linePositions, xOrY) {
-  for (i = 0; i < linePositions.length; i++) {
-    const LINE_WIDTH = getLineWidth(i, linePositions)
-    const moveToArgs = xOrY === 'x' ? [linePositions[i], 0] : [0, linePositions[i]]
-    const lineToArgs = xOrY === 'x' ? [linePositions[i], 400] : [400, linePositions[i]]
+  linePositions.forEach((linePosition, idx) => {
+    const LINE_WIDTH = getLineWidth(idx, linePositions)
+    const moveToArgs = xOrY === 'x' ? [linePosition, 0] : [0, linePosition]
+    const lineToArgs = xOrY === 'x' ? [linePosition, 400] : [400, linePosition]
+
     context.beginPath();
     context.moveTo(...moveToArgs);
     context.lineTo(...lineToArgs);
@@ -90,7 +89,7 @@ function addLinesToContext(context, linePositions, xOrY) {
     context.lineWidth = LINE_WIDTH;
     context.strokeStyle = 'black';
     context.stroke();
-  }
+  })
 
   return context
 }
@@ -112,22 +111,20 @@ function fillContextSquares(context, x, y) {
 }
 
 function makeMondrianImg(shouldSave) {
-  const { x, y } = getLinePositions()
+  const { xLineStarts, yLineStarts } = getLineStarts()
 
   let { context, canvas } = getContext()
-  context = addLinesToContext(context, x, 'x')
-  context = addLinesToContext(context, y, 'y')
-  context = fillContextSquares(context, x, y)
+  context = addLinesToContext(context, xLineStarts, 'x')
+  context = addLinesToContext(context, yLineStarts, 'y')
+  context = fillContextSquares(context, xLineStarts, yLineStarts)
 
   if (shouldSave) {
     saveCanvas(canvas)
   }
 }
 
-makeMondrianImg(true)
-
+makeMondrianImg()
 
 // TO DO:
 // 1. Generate line widths dynamically.
-// 2. Dynamically set the canvas size so it's larger.
-// 3. 
+// 2. Prevent illegal Mondrian squares- ones that only go across half of canvas.
