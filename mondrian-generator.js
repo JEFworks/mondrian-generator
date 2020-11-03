@@ -80,8 +80,7 @@ function getContext() {
   return { context, canvas }
 }
 
-function getLineWidths(linePositions) {
-  const LINE_WIDTHS = [2, 7, 12, 17]
+function getLineWidths(linePositions, LINE_WIDTHS) {
   const BORDER_WIDTH = 4
 
   const lineWidths = linePositions.map((_, idx) => {
@@ -92,10 +91,33 @@ function getLineWidths(linePositions) {
   return lineWidths
 }
 
-function addLinesToContext(context, linePositions, xOrY, lineWidths) {
+function getLinePoints(artistName) {
+  let linePoints
+
+  if (artistName === 'Mondrian') {
+    linePoints = {
+      xStart: 0,
+      yStart: 0,
+      xStop: CANVAS_HEIGHT,
+      yStop: CANVAS_WIDTH
+    }
+  } else if (artistName === 'Brown') {
+    linePoints = {
+      xStart: getRandomInt(10, 380),
+      xStop: getRandomInt(10, 380),
+      yStart: getRandomInt(10, 380),
+      yStop: getRandomInt(10, 380)
+    }
+  }
+
+  return linePoints
+}
+
+function addLinesToContext(context, linePositions, xOrY, lineWidths, artistName) {
   linePositions.forEach((linePosition, idx) => {
-    const moveToArgs = xOrY === 'x' ? [linePosition, 0] : [0, linePosition]
-    const lineToArgs = xOrY === 'x' ? [linePosition, CANVAS_HEIGHT] : [CANVAS_WIDTH, linePosition]
+    const { xStart, xStop, yStart, yStop } = getLinePoints(artistName)
+    const moveToArgs = xOrY === 'x' ? [linePosition, xStart] : [yStart, linePosition]
+    const lineToArgs = xOrY === 'x' ? [linePosition, xStop] : [yStop, linePosition]
 
     context.beginPath();
     context.moveTo(...moveToArgs);
@@ -137,23 +159,50 @@ function fillContextSquares(context, xLineStarts, yLineStarts, xLineWidths, yLin
   return context
 }
 
-function makeMondrianImg(shouldSave) {
-  const { xLineStarts, yLineStarts } = getLineStarts()
+const makeArtistImgFuncs = {
+  Mondrian: (artistName, shouldSave) => {
+    const { xLineStarts, yLineStarts } = getLineStarts()
 
-  let { context, canvas } = getContext()
-  const xLineWidths = getLineWidths(xLineStarts)
-  const yLineWidths = getLineWidths(yLineStarts)
+    let { context, canvas } = getContext()
 
-  context = fillContextSquares(context, xLineStarts, yLineStarts, xLineWidths, yLineWidths)
-  context = addLinesToContext(context, xLineStarts, 'x', xLineWidths)
-  context = addLinesToContext(context, yLineStarts, 'y', yLineWidths)
+    const lineWidths = [2, 7, 12, 17]
+    const xLineWidths = getLineWidths(xLineStarts, lineWidths)
+    const yLineWidths = getLineWidths(yLineStarts, lineWidths)
 
-  if (shouldSave) {
-    saveCanvas(canvas)
+    context = fillContextSquares(context, xLineStarts, yLineStarts, xLineWidths, yLineWidths)
+    context = addLinesToContext(context, xLineStarts, 'x', xLineWidths, 'Mondrian')
+    context = addLinesToContext(context, yLineStarts, 'y', yLineWidths, 'Mondrian')
+
+    if (shouldSave) {
+      saveCanvas(canvas)
+    }
+  },
+  Brown: (artistName, shouldSave) => {
+    const { xLineStarts, yLineStarts } = getLineStarts()
+
+    let { context, canvas } = getContext()
+    const lineWidths = [2, 7, 12, 17]
+
+    const xLineWidths = getLineWidths(xLineStarts, lineWidths)
+    const yLineWidths = getLineWidths(yLineStarts, lineWidths)
+    const xStop = getRandomInt(0, 400)
+    const yStop = getRandomInt(0, 400)
+
+    context = addLinesToContext(context, xLineStarts, 'x', xLineWidths, 'Brown')
+    context = addLinesToContext(context, yLineStarts, 'y', yLineWidths, 'Brown')
+
+    if (shouldSave) {
+      saveCanvas(canvas)
+    }
   }
+}
+
+function makeArtistImg(artistName, shouldSave) {
+  makeArtistImgFuncs[artistName](artistName, shouldSave)
 }
 
 // makeMondrianImg(true)
 
 // TO DO:
 // 1. Add options that create an img resembling Earle Brown's "December 1952" score.
+// 2. Fill transparent squares with white.
