@@ -204,7 +204,3 @@ function makeArtistImg(artistName, shouldSave) {
 }
 
 // makeMondrianImg(true)
-
-// TO DO:
-// 1. Add options that create an img resembling Earle Brown's "December 1952" score.
-// 2. Fill transparent squares with white.
