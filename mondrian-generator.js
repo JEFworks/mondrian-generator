@@ -84,19 +84,23 @@ function getContext() {
 
 function getLineWidths(linePositions, LINE_WIDTHS) {
   const BORDER_WIDTH = 4
+  console.log('linePositions:', linePositions)
 
   const lineWidths = linePositions.map((_, idx) => {
-    const lineWidth = idx === 0 || idx === linePositions.length - 1 ? BORDER_WIDTH : LINE_WIDTHS[getRandomInt(0, LINE_WIDTHS.length - 1)]
+    const lineWidth = isBorder(linePositions, idx) ? BORDER_WIDTH : LINE_WIDTHS[getRandomInt(0, LINE_WIDTHS.length - 1)]
+    console.log(`${idx}: ${lineWidth}`)
     return lineWidth
   })
 
   return lineWidths
 }
 
-function getLinePoints(artistName) {
+const isBorder = (linePositions, idx) => idx === 0 || idx === linePositions.length - 1
+
+function getLinePoints(artistName, linePositions, idx) {
   let linePoints
 
-  if (artistName === 'Mondrian') {
+  if (artistName === 'Mondrian' || isBorder(linePositions, idx)) {
     linePoints = {
       xStart: 0,
       yStart: 0,
@@ -117,7 +121,7 @@ function getLinePoints(artistName) {
 
 function addLinesToContext(context, linePositions, xOrY, lineWidths, artistName) {
   linePositions.forEach((linePosition, idx) => {
-    const { xStart, xStop, yStart, yStop } = getLinePoints(artistName)
+    const { xStart, xStop, yStart, yStop } = getLinePoints(artistName, linePositions, idx)
     const moveToArgs = xOrY === 'x' ? [linePosition, xStart] : [yStart, linePosition]
     const lineToArgs = xOrY === 'x' ? [linePosition, xStop] : [yStop, linePosition]
 
@@ -187,11 +191,10 @@ const makeArtistImgFuncs = {
 
     const xLineWidths = getLineWidths(xLineStarts, lineWidths)
     const yLineWidths = getLineWidths(yLineStarts, lineWidths)
-    const xStop = getRandomInt(0, 400)
-    const yStop = getRandomInt(0, 400)
 
     context = addLinesToContext(context, xLineStarts, 'x', xLineWidths, 'Brown')
     context = addLinesToContext(context, yLineStarts, 'y', yLineWidths, 'Brown')
+    // const linesWithBorders = addBorders(innerLines)
 
     if (shouldSave) {
       saveCanvas(canvas)
