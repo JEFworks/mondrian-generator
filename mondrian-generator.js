@@ -3,23 +3,23 @@ function clearCanvas() {
   context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function autoSaveImg(image) {
+function autoSaveImg(image, fileName) {
   const link = document.createElement('a');
   link.href = image;
-  link.download = 'new-artwork.jpg';
+  link.download = `${fileName}.jpg`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
 }
 
-function saveCanvas() {
+function saveCanvas(fileName) {
   const canvas = document.getElementById('compositionCanvas');
   let image = canvas.toDataURL("image/png");
   image = image.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
   image = image.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=mondrian.png');
   this.href = image;
 
-  autoSaveImg(image)
+  autoSaveImg(image, fileName)
 }
 
 const colorToHexMap = {
@@ -35,11 +35,10 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function orientXYtoTopLeft(xInnerLines, yInnerLines) {
-  const xLineStarts = xInnerLines.sort((a, b) => a - b);
-  const yLineStarts = yInnerLines.sort((a, b) => a - b).reverse();
+function orientXYtoTopLeft(innerLines, xOrY) {
+  const lineStarts = xOrY === 'x' ? innerLines.sort((a, b) => a - b) : innerLines.sort((a, b) => a - b).reverse();
 
-  return { xLineStarts, yLineStarts }
+  return lineStarts
 }
 
 function addBorders(innerLines) {
@@ -55,18 +54,17 @@ function getInnerLines(numLines) {
   for (let i = 0; i < numLines; i++) {
     innerLines.push(getRandomInt(PADDING_MARGIN, CANVAS_WIDTH - PADDING_MARGIN))
   };
+
   const linesWithBorders = addBorders(innerLines)
   return linesWithBorders
 }
 
-function getLineStarts() {
-  const numXLines = getRandomInt(2, 4);
-  const numYLines = getRandomInt(2, 4)
-  const xInnerLines = getInnerLines(numXLines)
-  const yInnerLines = getInnerLines(numYLines)
-  const { xLineStarts, yLineStarts } = orientXYtoTopLeft(xInnerLines, yInnerLines)
+function getLineStarts(xOrY) {
+  const numLines = getRandomInt(2, 4);
+  const innerLines = getInnerLines(numLines)
+  const lineStarts = orientXYtoTopLeft(innerLines, xOrY)
 
-  return { xLineStarts, yLineStarts }
+  return lineStarts
 }
 
 const CANVAS_WIDTH = 400
@@ -84,11 +82,9 @@ function getContext() {
 
 function getLineWidths(linePositions, LINE_WIDTHS) {
   const BORDER_WIDTH = 4
-  console.log('linePositions:', linePositions)
 
   const lineWidths = linePositions.map((_, idx) => {
     const lineWidth = isBorder(linePositions, idx) ? BORDER_WIDTH : LINE_WIDTHS[getRandomInt(0, LINE_WIDTHS.length - 1)]
-    console.log(`${idx}: ${lineWidth}`)
     return lineWidth
   })
 
@@ -149,7 +145,7 @@ function getRectDims(xLineStarts, yLineStarts, xLineWidths, yLineWidths) {
   return { X_START, Y_START, RECT_WIDTH, RECT_HEIGHT }
 }
 
-function fillContextSquares(context, xLineStarts, yLineStarts, xLineWidths, yLineWidths) {
+function fillContextSquares(context, xLineStarts, yLineStarts, xLineWidths, yLineWidths, opts) {
   const numColors = getRandomInt(3, 10);
 
   for (let c = 0; c < numColors; c++) {
@@ -165,26 +161,36 @@ function fillContextSquares(context, xLineStarts, yLineStarts, xLineWidths, yLin
   return context
 }
 
-const makeArtistImgFuncs = {
-  Mondrian: (artistName, shouldSave) => {
-    const { xLineStarts, yLineStarts } = getLineStarts()
+const imgParams = {
 
+}
+
+const makeArtistImgFuncs = {
+  Mondrian: (artistName, shouldSave, opts, fileName) => {
     let { context, canvas } = getContext()
 
-    const lineWidths = [2, 7, 12, 17]
-    const xLineWidths = getLineWidths(xLineStarts, lineWidths)
-    const yLineWidths = getLineWidths(yLineStarts, lineWidths)
+    const xLineStarts = imgParams.xLineStarts || getLineStarts('x')
+    const yLineStarts = imgParams.yLineStarts || getLineStarts('y')
+    imgParams.xLineStarts = xLineStarts
+    imgParams.yLineStarts = yLineStarts
 
-    context = fillContextSquares(context, xLineStarts, yLineStarts, xLineWidths, yLineWidths)
+    const lineWidths = [2, 7, 12, 17]
+    const xLineWidths = imgParams.xLineWidths || getLineWidths(xLineStarts, lineWidths)
+    const yLineWidths = imgParams.yLineWidths || getLineWidths(yLineStarts, lineWidths)
+    imgParams.xLineWidths = xLineWidths
+    imgParams.yLineWidths = yLineWidths
+
+    context = fillContextSquares(context, xLineStarts, yLineStarts, xLineWidths, yLineWidths, opts)
     context = addLinesToContext(context, xLineStarts, 'x', xLineWidths, 'Mondrian')
     context = addLinesToContext(context, yLineStarts, 'y', yLineWidths, 'Mondrian')
 
     if (shouldSave) {
-      saveCanvas(canvas)
+      saveCanvas(fileName)
     }
   },
-  Brown: (artistName, shouldSave) => {
-    const { xLineStarts, yLineStarts } = getLineStarts()
+  Brown: (artistName, shouldSave, opts, fileName) => {
+    const xLineStarts = getLineStarts('x')
+    const yLineStarts = getLineStarts('y')
 
     let { context, canvas } = getContext()
     const lineWidths = [2, 7, 12, 17]
@@ -197,13 +203,19 @@ const makeArtistImgFuncs = {
     // const linesWithBorders = addBorders(innerLines)
 
     if (shouldSave) {
-      saveCanvas(canvas)
+      saveCanvas(fileName)
     }
   }
 }
 
-function makeArtistImg(artistName, shouldSave) {
-  makeArtistImgFuncs[artistName](artistName, shouldSave)
+function makeArtistImg(artistName, shouldSave, opts) {
+  for (let i = 0; i < opts.variations; i++) {
+    makeArtistImgFuncs[artistName](artistName, shouldSave, opts, `new-artwork-${i + 1}`)
+  }
 }
 
 // makeMondrianImg(true)
+
+// TO DO:
+// 1. Set up opts object for variations.
+// 2. Fix border width bug.
