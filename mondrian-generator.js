@@ -1,3 +1,16 @@
+const CANVAS_WIDTH = 400
+const CANVAS_HEIGHT = 400
+
+function getContext(fillStyle = 'white') {
+  const canvas = document.getElementById('compositionCanvas');
+  canvas.width = CANVAS_WIDTH
+  canvas.height = CANVAS_HEIGHT
+  const context = canvas.getContext('2d');
+  context.fillStyle = fillStyle
+  context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  return { context, canvas }
+}
+
 function clearCanvas() {
   let { context, canvas } = getContext()
   context.clearRect(0, 0, canvas.width, canvas.height);
@@ -26,7 +39,8 @@ const colorToHexMap = {
   red: '#fe0000',
   yellow: '#ffff00',
   blue: '#0000fe',
-  black: '#000000'
+  black: '#000000',
+  tan: '#e7e0b8'
 }
 
 const colors = ['red', 'yellow', 'black', 'blue'];
@@ -65,19 +79,6 @@ function getLineStarts(xOrY) {
   const lineStarts = orientXYtoTopLeft(innerLines, xOrY)
 
   return lineStarts
-}
-
-const CANVAS_WIDTH = 400
-const CANVAS_HEIGHT = 400
-
-function getContext() {
-  const canvas = document.getElementById('compositionCanvas');
-  canvas.width = CANVAS_WIDTH
-  canvas.height = CANVAS_HEIGHT
-  const context = canvas.getContext('2d');
-  context.fillStyle = "white";
-  context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-  return { context, canvas }
 }
 
 function getLineWidths(linePositions, LINE_WIDTHS) {
@@ -150,12 +151,8 @@ function fillContextSquares(context, xLineStarts, yLineStarts, xLineWidths, yLin
 
   for (let c = 0; c < numColors; c++) {
     const { X_START, Y_START, RECT_HEIGHT, RECT_WIDTH } = getRectDims(xLineStarts, yLineStarts, xLineWidths, yLineWidths)
-    context.beginPath();
-    context.rect(X_START, Y_START, RECT_WIDTH, RECT_HEIGHT);
     const randColor = colors[getRandomInt(0, colors.length - 1)];
-    context.fillStyle = colorToHexMap[randColor];
-    context.fill();
-    context.stroke();
+    context = drawRect(context, colorToHexMap[randColor], X_START, Y_START, RECT_WIDTH, RECT_HEIGHT)
   }
 
   return context
@@ -205,17 +202,63 @@ const makeArtistImgFuncs = {
     if (shouldSave) {
       saveCanvas(fileName)
     }
+  },
+  LeWitt: (artistName, shouldSave, opts, fileName, idx) => {
+    let { context, canvas } = getContext(colorToHexMap.tan)
+
+    context = drawRect(context, colorToHexMap.black, 20, 20, 360, 360)
+
+    for (let i = 0; i < 7; i++) {
+      if (idx !== 0 && Math.random() > .9) {
+        console.log('hit')
+        continue
+      }
+      const xStart = (i * 48) + 40
+      const yStart = 40
+      const width = 28
+      const height = 160
+      context = drawRect(context, colorToHexMap.tan, xStart, yStart, width, height)
+    }
+
+    for (let i = 0; i < 3; i++) {
+      if (idx !== 0 && Math.random() > .7) {
+        console.log('hit')
+        continue
+      }
+      const xStart = 40
+      const yStart = (i * 48) + 220
+      const width = 318
+      const height = 30
+      context = drawRect(context, colorToHexMap.tan, xStart, yStart, width, height)
+    }
+
+    if (shouldSave) {
+      saveCanvas(fileName)
+    }
   }
+}
+
+function drawRect(context, fillStyle, xStart, yStart, width, height) {
+  context.beginPath();
+  context.rect(xStart, yStart, width, height);
+  context.fillStyle = fillStyle
+  context.fill();
+  context.stroke();
+
+  return context
 }
 
 function makeArtistImg(artistName, shouldSave, opts) {
   for (let i = 0; i < opts.variations; i++) {
-    makeArtistImgFuncs[artistName](artistName, shouldSave, opts, `new-artwork-${i + 1}`)
+    makeArtistImgFuncs[artistName](artistName, shouldSave, opts, `new-artwork-${i + 1}`, i)
   }
 }
 
 // makeMondrianImg(true)
 
 // TO DO:
-// 1. Set up opts object for variations.
-// 2. Fix border width bug.
+// 1. Mock Sol LeWitt image.
+// -- express all dims in LeWitt func in terms of CANVAS_HEIGHT and CANVAS_WIDTH.
+// 2. Mock van Doesburg image.
+// 3. Make Brown's "4 Systems" (with prependicular-only lines.)
+// 4. Fix border width bug.
