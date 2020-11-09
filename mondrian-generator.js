@@ -19,7 +19,7 @@ function clearCanvas() {
 function autoSaveImg(image, fileName) {
   const link = document.createElement('a');
   link.href = image;
-  link.download = `${fileName}.jpg`;
+  link.download = `${fileName}.png`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -97,7 +97,7 @@ const isBorder = (linePositions, idx) => idx === 0 || idx === linePositions.leng
 function getLinePoints(artistName, linePositions, idx) {
   let linePoints
 
-  if (artistName === 'Mondrian' || isBorder(linePositions, idx)) {
+  if (artistName === 'Mondrian') {
     linePoints = {
       xStart: 0,
       yStart: 0,
@@ -210,7 +210,6 @@ const makeArtistImgFuncs = {
 
     for (let i = 0; i < 7; i++) {
       if (idx !== 0 && Math.random() > .9) {
-        console.log('hit')
         continue
       }
       const xStart = (i * 48) + 40
@@ -262,3 +261,8 @@ function makeArtistImg(artistName, shouldSave, opts) {
 // 2. Mock van Doesburg image.
 // 3. Make Brown's "4 Systems" (with prependicular-only lines.)
 // 4. Fix border width bug.
+// 5. Create a demo of my vision for the video animations in FinalCut Pro.
+// --Re-do the .png word images in 4 new colors: black, yellow, red, and blue. -- DONE
+// --Create 1 demo with photographs, and 1 with mocked .pngs.
+// --If mocked .pngs are too boring, explore photo-manipulation software that
+// will make the photographs sharper. 
