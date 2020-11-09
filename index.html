@@ -9,7 +9,7 @@
     />
   </head>
   
-  <body onload="makeArtistImg('Mondrian');">
+  <body onload="makeArtistImg('Brown', true, {variations: 1});">
 
     <!-- fork me on github banner -->
     <a href="https://github.com/JEFworks/mondrian-generator">
@@ -19,9 +19,12 @@
     <center>
       <h1>Random Composition in Red, Blue, and Yellow</h1>      
       <canvas id="compositionCanvas" ></canvas>
+      <!-- <canvas id="compositionCanvas2" ></canvas> -->
+      <!-- <canvas id="compositionCanvas3" ></canvas> -->
+
       <script type="text/javascript" src="./mondrian-generator.js"></script>
       <br>
-      <button class="btn" onclick="clearCanvas(); makeArtistImg('Mondrian');" href="javascript:void(0);">Generate New</button>
+      <button class="btn" onclick="clearCanvas(); makeArtistImg('Brown', true, {variations: 1});" href="javascript:void(0);">Generate New</button>
       <a class='btn' id='save' onclick='saveCanvas()'  href="javascript:void(0);">Save Image</a>
     </center>
   </body>
